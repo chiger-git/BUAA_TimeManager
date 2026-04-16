@@ -1,5 +1,5 @@
 {
-    "version": "1.0.1",
-    "update_log": "新增偏好设置界面，用户可设置字体字号等",
-    "download_url": "https://github.com/chiger-git/BUAA_TimeManager/releases/download/v1.0.1/BUAA._.exe"
+    "version": "1.0.2",
+    "update_log": "解决表头文本截取问题，让表头根据内容自动调整行高和列宽。",
+    "download_url": "https://github.com/chiger-git/BUAA_TimeManager/releases/download/v1.0.2/BUAA._.exe"
 }
