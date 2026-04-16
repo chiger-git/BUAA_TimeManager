@@ -8,7 +8,7 @@ import threading
 from datetime import datetime, timedelta, date, time
 
 from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, 
+    QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QFormLayout, QSpinBox, QDialogButtonBox,
     QTabWidget, QTableWidget, QTableWidgetItem, QPushButton, 
     QLineEdit, QDateEdit, QTimeEdit, QLabel, QHeaderView, QComboBox,
     QMessageBox, QDialog, QListWidget, QAbstractItemView, QProgressBar, QSplashScreen
@@ -144,9 +144,14 @@ class BUAA_TimeManager(QMainWindow):
         
         self.current_week = self.calculate_current_week()
         self.viewing_week = self.current_week
+        self.preferences = {"font_family": "微软雅黑", "font_size": 12}
         
         self.load_data()
         self.init_ui()
+        
+        # Apply initial font
+        app_font = QFont(self.preferences["font_family"], self.preferences["font_size"])
+        QApplication.instance().setFont(app_font)
         
         # Check for updates
         self.update_thread = UpdateCheckerThread()
@@ -182,14 +187,68 @@ class BUAA_TimeManager(QMainWindow):
         self.tab_todo = QWidget()
         self.tab_schedule = QWidget()
         self.tab_courses = QWidget()  # 新增：课程管理
-        
+        self.tab_settings = QWidget()
+
         self.tabs.addTab(self.tab_todo, "📥 任务列表")
         self.tabs.addTab(self.tab_schedule, "📅 周视图课表")
         self.tabs.addTab(self.tab_courses, "📚 自定义课程管理")
-        
+        self.tabs.addTab(self.tab_settings, "⚙ 偏好设置")
+
         self.init_todo_tab()
         self.init_schedule_tab()
         self.init_course_tab()
+        self.init_settings_tab()
+
+    def init_settings_tab(self):
+        layout = QVBoxLayout(self.tab_settings)
+        layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        
+        hint = QLabel("💡 在这里您可以自定义界面的显示字体。修改后会立即生效。")
+        hint.setStyleSheet("color: #666; font-size: 14px;")
+        layout.addWidget(hint)
+        
+        form = QFormLayout()
+        
+        self.font_combo = QComboBox()
+        self.font_combo.addItems(["微软雅黑", "宋体", "楷体"])
+        current_font = self.preferences.get("font_family", "微软雅黑")
+        self.font_combo.setCurrentText(current_font)
+        
+        self.font_size_combo = QComboBox()
+        self.font_size_combo.addItems(["10", "11", "12", "14", "16", "18"])
+        current_size = str(self.preferences.get("font_size", 12))
+        self.font_size_combo.setCurrentText(current_size)
+        
+        form.addRow("选择界面字体:", self.font_combo)
+        form.addRow("选择界面字号(默认12):", self.font_size_combo)
+        
+        apply_btn = QPushButton("保存并应用设置")
+        apply_btn.clicked.connect(self.apply_font_settings)
+        
+        layout.addLayout(form)
+        layout.addWidget(apply_btn)
+        
+        # 增加对表格的全局列宽自动折行设置以防止截断
+        self.task_table.setWordWrap(True)
+        self.schedule_table.setWordWrap(True)
+        self.course_table.setWordWrap(True)
+        
+    def apply_font_settings(self):
+        font_family = self.font_combo.currentText()
+        font_size = int(self.font_size_combo.currentText())
+        
+        self.preferences["font_family"] = font_family
+        self.preferences["font_size"] = font_size
+        
+        app_font = QFont(font_family, font_size)
+        QApplication.instance().setFont(app_font)
+        
+        # 为了防止大字体被表格截断，每次修改字体都让表格调整行高
+        for table in [self.task_table, self.schedule_table, self.course_table]:
+            table.resizeRowsToContents()
+            
+        self.save_data()
+        QMessageBox.information(self, "成功", "设置已保存并全局生效。")
 
     def init_todo_tab(self):
         layout = QVBoxLayout(self.tab_todo)
@@ -795,6 +854,9 @@ class BUAA_TimeManager(QMainWindow):
                     loaded_courses = data.get("courses")
                     if loaded_courses is not None:
                         self.courses = loaded_courses
+                        
+                    self.preferences = data.get("preferences", {"font_family": "微软雅黑", "font_size": 12})
+
                         
                     # 转换回元组字典键或直接兼容处理
                     self.schedule_assignments = {}
