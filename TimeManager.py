@@ -16,7 +16,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QDate, QTime, QTimer, QThread, pyqtSignal
 from PyQt6.QtGui import QColor, QFont, QPixmap, QPainter
 
-CURRENT_VERSION = "1.0.1"
+CURRENT_VERSION = "1.0.2"
 DATA_FILE = os.path.join(os.path.expanduser("~"), "buaa_todo_data_v2.json")
 
 # 定义北航的上课时间表
@@ -243,10 +243,21 @@ class BUAA_TimeManager(QMainWindow):
         app_font = QFont(font_family, font_size)
         QApplication.instance().setFont(app_font)
         
-        # 为了防止大字体被表格截断，每次修改字体都让表格调整行高
+        # 为了防止大字体被表格截断，每次修改字体都让表格调整行高和表头高度
         for table in [self.task_table, self.schedule_table, self.course_table]:
             table.resizeRowsToContents()
             
+            vertical_header = table.verticalHeader()
+            if vertical_header:
+                for i in range(table.rowCount()):
+                    # 使纵向表头自适应内容，兼容课程表头较大的情况
+                    vertical_header.resizeSection(i, vertical_header.sectionSizeHint(i))
+                    
+            horizontal_header = table.horizontalHeader()
+            if horizontal_header:
+                for i in range(table.columnCount()):
+                    horizontal_header.resizeSection(i, horizontal_header.sectionSizeHint(i))
+                    
         self.save_data()
         QMessageBox.information(self, "成功", "设置已保存并全局生效。")
 
