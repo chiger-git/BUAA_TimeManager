@@ -1,5 +1,5 @@
 {
     "version": "1.1.0",
-    "update_log": "支持任务分类及其独立网格视图排布；更新了自适应行高与加粗表头；加入 Ctrl 缩放功能；恢复启动过渡动画及版本更新检测。",
+    "update_log": "支持任务分类及其独立网格视图排布；更新了自适应行高与加粗表头；加入 Ctrl 缩放功能。",
     "download_url": "https://github.com/chiger-git/BUAA_TimeManager/releases/download/v1.0.2/BUAA._.exe"
 }

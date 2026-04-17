@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['D:\\2026_Spring\\TimeManageTools\\TimeManager.py'],
+    ['D:\\2026_Spring\\TimeManageTools\\TimeManager_v1.1.0.py'],
     pathex=[],
     binaries=[],
     datas=[],

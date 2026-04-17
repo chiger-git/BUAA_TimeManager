@@ -14,7 +14,7 @@ except ImportError:
     subprocess.check_call(["pip", "install", "pyinstaller"])
 
 icon_path = r"D:\2026_Spring\TimeManageTools\TimeManager.ico"
-script_path = r"D:\2026_Spring\TimeManageTools\TimeManager.py"
+script_path = r"D:\2026_Spring\TimeManageTools\TimeManager_v1.1.0.py"
 setup_script_path = r"D:\2026_Spring\TimeManageTools\setup_wizard.py"
 app_exe_path = r"D:\2026_Spring\TimeManageTools\dist\BUAA日程管理.exe"
 
